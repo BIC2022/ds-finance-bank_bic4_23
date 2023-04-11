@@ -1,0 +1,219 @@
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://trading.ws.dsfinance.froihofer.net/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="TradingWebServiceService" targetNamespace="http://trading.ws.dsfinance.froihofer.net/">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://trading.ws.dsfinance.froihofer.net/" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://trading.ws.dsfinance.froihofer.net/">
+            <xs:element name="buy" type="tns:buy"/>
+            <xs:element name="buyResponse" type="tns:buyResponse"/>
+            <xs:element name="findStockQuotesByCompanyName" type="tns:findStockQuotesByCompanyName"/>
+            <xs:element name="findStockQuotesByCompanyNameResponse" type="tns:findStockQuotesByCompanyNameResponse"/>
+            <xs:element name="getStockQuoteHistory" type="tns:getStockQuoteHistory"/>
+            <xs:element name="getStockQuoteHistoryResponse" type="tns:getStockQuoteHistoryResponse"/>
+            <xs:element name="getStockQuotes" type="tns:getStockQuotes"/>
+            <xs:element name="getStockQuotesResponse" type="tns:getStockQuotesResponse"/>
+            <xs:element name="sell" type="tns:sell"/>
+            <xs:element name="sellResponse" type="tns:sellResponse"/>
+            <xs:complexType name="buy">
+                <xs:sequence>
+                    <xs:element name="symbol" type="xs:string"/>
+                    <xs:element name="shares" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="buyResponse">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="return" type="xs:decimal"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="findStockQuotesByCompanyName">
+                <xs:sequence>
+                    <xs:element name="partOfCompanyName" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="findStockQuotesByCompanyNameResponse">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:publicStockQuote"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="publicStockQuote">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="companyName" type="xs:string"/>
+                    <xs:element minOccurs="0" name="floatShares" type="xs:long"/>
+                    <xs:element minOccurs="0" name="lastTradePrice" type="xs:decimal"/>
+                    <xs:element minOccurs="0" name="lastTradeTime" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="marketCapitalization" type="xs:long"/>
+                    <xs:element minOccurs="0" name="stockExchange" type="xs:string"/>
+                    <xs:element minOccurs="0" name="symbol" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="sell">
+                <xs:sequence>
+                    <xs:element name="symbol" type="xs:string"/>
+                    <xs:element name="shares" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="sellResponse">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="return" type="xs:decimal"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="getStockQuotes">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" name="symbols" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="getStockQuotesResponse">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:publicStockQuote"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="getStockQuoteHistory">
+                <xs:sequence>
+                    <xs:element name="symbol" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="getStockQuoteHistoryResponse">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:publicStockQuote"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="TradingWSException" type="tns:TradingWSException"/>
+            <xs:complexType name="TradingWSException">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="message" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="findStockQuotesByCompanyNameResponse">
+        <wsdl:part element="tns:findStockQuotesByCompanyNameResponse" name="parameters"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getStockQuotesResponse">
+        <wsdl:part element="tns:getStockQuotesResponse" name="parameters"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="buyResponse">
+        <wsdl:part element="tns:buyResponse" name="parameters"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="sellResponse">
+        <wsdl:part element="tns:sellResponse" name="parameters"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="buy">
+        <wsdl:part element="tns:buy" name="parameters"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="findStockQuotesByCompanyName">
+        <wsdl:part element="tns:findStockQuotesByCompanyName" name="parameters"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="sell">
+        <wsdl:part element="tns:sell" name="parameters"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getStockQuoteHistoryResponse">
+        <wsdl:part element="tns:getStockQuoteHistoryResponse" name="parameters"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getStockQuotes">
+        <wsdl:part element="tns:getStockQuotes" name="parameters"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="TradingWSException">
+        <wsdl:part element="tns:TradingWSException" name="TradingWSException"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getStockQuoteHistory">
+        <wsdl:part element="tns:getStockQuoteHistory" name="parameters"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="TradingWebService">
+        <wsdl:documentation>Available stock quotes can be searched with the operation 'findStockQuotesByCompanyName'. The other operations generally accept a 'symbol' parameter that uniquely identifies a stock option.</wsdl:documentation>
+        <wsdl:operation name="buy">
+            <wsdl:documentation>Buys shares and returns the price per share effective for the buying transaction.</wsdl:documentation>
+            <wsdl:input message="tns:buy" name="buy"> </wsdl:input>
+            <wsdl:output message="tns:buyResponse" name="buyResponse"> </wsdl:output>
+            <wsdl:fault message="tns:TradingWSException" name="TradingWSException"> </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="findStockQuotesByCompanyName">
+            <wsdl:documentation>Returns a list of the first 100 stock quotes where the company name contains the string specified in the 'partOfCompanyName' parameter</wsdl:documentation>
+            <wsdl:input message="tns:findStockQuotesByCompanyName" name="findStockQuotesByCompanyName"> </wsdl:input>
+            <wsdl:output message="tns:findStockQuotesByCompanyNameResponse" name="findStockQuotesByCompanyNameResponse"> </wsdl:output>
+            <wsdl:fault message="tns:TradingWSException" name="TradingWSException"> </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="sell">
+            <wsdl:documentation>Sells shares and returns the price per share effective for the selling transaction.</wsdl:documentation>
+            <wsdl:input message="tns:sell" name="sell"> </wsdl:input>
+            <wsdl:output message="tns:sellResponse" name="sellResponse"> </wsdl:output>
+            <wsdl:fault message="tns:TradingWSException" name="TradingWSException"> </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getStockQuotes">
+            <wsdl:documentation>Returns the stock quotes for the stock options identified by the 'symbols' parameter.</wsdl:documentation>
+            <wsdl:input message="tns:getStockQuotes" name="getStockQuotes"> </wsdl:input>
+            <wsdl:output message="tns:getStockQuotesResponse" name="getStockQuotesResponse"> </wsdl:output>
+            <wsdl:fault message="tns:TradingWSException" name="TradingWSException"> </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getStockQuoteHistory">
+            <wsdl:documentation>Returns a list of historical stock quotes, limited to a few months in the past.</wsdl:documentation>
+            <wsdl:input message="tns:getStockQuoteHistory" name="getStockQuoteHistory"> </wsdl:input>
+            <wsdl:output message="tns:getStockQuoteHistoryResponse" name="getStockQuoteHistoryResponse"> </wsdl:output>
+            <wsdl:fault message="tns:TradingWSException" name="TradingWSException"> </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="TradingWebServiceServiceSoapBinding" type="tns:TradingWebService">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="buy">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input name="buy">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="buyResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="TradingWSException">
+                <soap:fault name="TradingWSException" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="findStockQuotesByCompanyName">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input name="findStockQuotesByCompanyName">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="findStockQuotesByCompanyNameResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="TradingWSException">
+                <soap:fault name="TradingWSException" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="sell">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input name="sell">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="sellResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="TradingWSException">
+                <soap:fault name="TradingWSException" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getStockQuotes">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input name="getStockQuotes">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="getStockQuotesResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="TradingWSException">
+                <soap:fault name="TradingWSException" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getStockQuoteHistory">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input name="getStockQuoteHistory">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="getStockQuoteHistoryResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="TradingWSException">
+                <soap:fault name="TradingWSException" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="TradingWebServiceService">
+        <wsdl:port binding="tns:TradingWebServiceServiceSoapBinding" name="TradingWebServicePort">
+            <soap:address location="https://edu.dedisys.org/ds-finance/ws/TradingService"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
