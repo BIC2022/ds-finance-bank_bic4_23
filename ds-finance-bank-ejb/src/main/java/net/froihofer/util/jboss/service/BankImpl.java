@@ -1,8 +1,10 @@
 package net.froihofer.util.jboss.service;
 
+import net.froihofer.dsfinance.ws.trading.TradingWSException_Exception;
 import net.froihofer.dsfinance.ws.trading.TradingWebService;
 import net.froihofer.dsfinance.ws.trading.TradingWebServiceService;
 import net.froihofer.ejb.bank.common.Bank;
+import net.froihofer.ejb.bank.common.BankException;
 import net.froihofer.ejb.bank.common.PublicStockQuoteDTO;
 import net.froihofer.util.jboss.entity.PublicStockQuoteTranslator;
 import org.slf4j.Logger;
@@ -57,7 +59,7 @@ public class BankImpl implements Bank {
     }
 
     @Override
-    public BigDecimal buyStockByName(String symbol, int shares) {
+    public BigDecimal buyStockByName(String symbol, int shares) throws BankException {
         setup();
         log.info("try buy Stock by symbol: " + symbol + " Amount: " + shares);
 
@@ -65,10 +67,10 @@ public class BankImpl implements Bank {
 
             return tradingWebService.buy(symbol, shares);
 
-        }catch (Exception e) {
-            log.error(e.toString(), e);
-            return null;
         }
-
+        catch (TradingWSException_Exception e) {
+            log.error("Bank threw Exception: " + e.getMessage());
+            throw new BankException(e.getMessage());
+        }
     }
 }

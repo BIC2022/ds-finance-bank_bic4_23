@@ -8,6 +8,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import net.froihofer.ejb.bank.common.Bank;
+import net.froihofer.ejb.bank.common.BankException;
 import net.froihofer.util.AuthCallbackHandler;
 import net.froihofer.util.WildflyJndiLookupHelper;
 import org.slf4j.Logger;
@@ -56,7 +57,7 @@ public class BankClient {
         var test = bank.findStockByName(name);
         System.out.println("Search result");
         for(int i = 0; i < test.size(); i++) {
-          System.out.printf("%s: %s\n", test.get(i).getCompanyName(), test.get(i).getSymbol());
+          System.out.printf("%s: Symbol = %s Available shares: %d\n", test.get(i).getCompanyName(), test.get(i).getSymbol(), test.get(i).getFloatShares());
         }
       } else if(option.equals("buy")) {
         System.out.println("Enter symbol: ");
@@ -69,7 +70,10 @@ public class BankClient {
           System.out.println("Cost per share: " + result);
           System.out.println("Overall cost: " + result.multiply(BigDecimal.valueOf(shares)));
 
-        } catch (Exception e) {
+        } catch (BankException e) {
+          log.error("Bank threw Exception: "+ e.getMessage());
+        }  catch (Exception e) {
+          log.error("Something did not work, see stack trace.", e);
           e.printStackTrace();
         }
       }

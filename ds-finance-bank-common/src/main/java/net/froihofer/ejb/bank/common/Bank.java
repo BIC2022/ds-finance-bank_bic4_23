@@ -8,5 +8,5 @@ import java.util.List;
 public interface Bank {
     public List<PublicStockQuoteDTO> findStockByName(String name);
     public String testMethod(String input);
-    public BigDecimal buyStockByName(String symbol, int shares);
+    public BigDecimal buyStockByName(String symbol, int shares) throws BankException;
 }
