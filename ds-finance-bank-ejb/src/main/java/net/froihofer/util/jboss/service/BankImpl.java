@@ -13,12 +13,15 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.jws.WebService;
 import javax.xml.ws.BindingProvider;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @Stateless(name="BankService")
+@WebService(endpointInterface = "net.froihofer.ejb.bank.common.Bank", serviceName = "BankService",
+        portName = "BankServicePort")
 @PermitAll
 public class BankImpl implements Bank {
 
@@ -32,8 +35,8 @@ public class BankImpl implements Bank {
         TradingWebServiceService tradingWebServiceService = new TradingWebServiceService();
         tradingWebService = tradingWebServiceService.getTradingWebServicePort();
         BindingProvider bindingProvider = (BindingProvider) tradingWebService;
-        bindingProvider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "yourUsername");
-        bindingProvider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "yourPassword");
+        bindingProvider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "bic4a23_wohlrabe");
+        bindingProvider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "ohKoo3k");
     }
     @Override
     public List<PublicStockQuoteDTO> findStockByName(String name) {

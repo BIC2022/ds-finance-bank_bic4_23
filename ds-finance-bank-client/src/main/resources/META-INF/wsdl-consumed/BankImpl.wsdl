@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://service.jboss.util.froihofer.net/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://common.bank.ejb.froihofer.net/" name="BankService" targetNamespace="http://service.jboss.util.froihofer.net/">
+  <wsdl:import location="http://localhost:8080/ds-finance-bank/ws/BankService/BankImpl?wsdl=Bank.wsdl" namespace="http://common.bank.ejb.froihofer.net/">
+    </wsdl:import>
+  <wsdl:binding name="BankServiceSoapBinding" type="ns1:Bank">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="testMethod">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="testMethod">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="testMethodResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="buyStockByName">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="buyStockByName">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="buyStockByNameResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="BankException">
+        <soap:fault name="BankException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="findStockByName">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findStockByName">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findStockByNameResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="BankService">
+    <wsdl:port binding="tns:BankServiceSoapBinding" name="BankServicePort">
+      <soap:address location="http://localhost:8080/ds-finance-bank/ws/BankService/BankImpl"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

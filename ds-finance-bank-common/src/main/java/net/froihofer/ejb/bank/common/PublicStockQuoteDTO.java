@@ -1,6 +1,5 @@
 package net.froihofer.ejb.bank.common;
 
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -78,5 +77,8 @@ public class PublicStockQuoteDTO implements Serializable {
         this.marketCapitalization = marketCapitalization;
         this.stockExchange = stockExchange;
         this.symbol = symbol;
+    }
+    public PublicStockQuoteDTO() {
+
     }
 }
