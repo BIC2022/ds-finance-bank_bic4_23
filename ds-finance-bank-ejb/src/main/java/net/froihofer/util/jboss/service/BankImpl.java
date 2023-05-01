@@ -35,8 +35,8 @@ public class BankImpl implements Bank {
         TradingWebServiceService tradingWebServiceService = new TradingWebServiceService();
         tradingWebService = tradingWebServiceService.getTradingWebServicePort();
         BindingProvider bindingProvider = (BindingProvider) tradingWebService;
-        bindingProvider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "bic4a23_wohlrabe");
-        bindingProvider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "ohKoo3k");
+        bindingProvider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "yourGitUser");
+        bindingProvider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "yourGitPW");
     }
     @Override
     public List<PublicStockQuoteDTO> findStockByName(String name) {
@@ -45,6 +45,9 @@ public class BankImpl implements Bank {
         try {
             var quotes = tradingWebService.findStockQuotesByCompanyName(name);
             log.info("Stock size: " + quotes.size());
+            log.info("First Stock lastTradeTime: " + (quotes.size() > 0 ? quotes.get(0).getLastTradeTime().toString() : "null"));
+            log.info("First Stock after Transformation lastTradeTime: " + (quotes.size() > 0 ? publicStockQuoteTranslator.toPublicStockQuoteDTO(quotes.get(0)).getLastTradeTime().toString() : "null"));
+
             List<PublicStockQuoteDTO> quoteDTOs = new ArrayList<>();
             for(int i = 0; i < quotes.size(); i++) {
                 quoteDTOs.add(publicStockQuoteTranslator.toPublicStockQuoteDTO(quotes.get(i)));
