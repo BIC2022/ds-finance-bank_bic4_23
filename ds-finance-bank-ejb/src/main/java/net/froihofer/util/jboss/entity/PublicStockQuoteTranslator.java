@@ -29,7 +29,7 @@ public class PublicStockQuoteTranslator {
         pq.setLastTradePrice(publicStockQuote.getLastTradePrice());
 
         try {
-            GregorianCalendar gregorianCalendar = GregorianCalendar.from(publicStockQuote.getLastTradeTime());
+            GregorianCalendar gregorianCalendar = GregorianCalendar.from(publicStockQuote.getLastTradeTimeAsDate());
             XMLGregorianCalendar xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
             pq.setLastTradeTime(xmlGregorianCalendar);
         } catch (Exception e) {
