@@ -3,6 +3,9 @@
   <persistence-unit name="ds-finance-bank-persunit" transaction-type="JTA">
     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
     <jta-data-source>java:/datasources/DsFinanceBankDS</jta-data-source>
+    <class>net.froihofer.util.jboss.persistence.User</class>
+    <class>net.froihofer.util.jboss.persistence.Address</class>
+    <class>net.froihofer.util.jboss.persistence.Share</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="hibernate.hbm2ddl.auto" value="update"/>

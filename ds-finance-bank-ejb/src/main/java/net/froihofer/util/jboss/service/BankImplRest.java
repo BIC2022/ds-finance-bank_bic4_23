@@ -1,11 +1,14 @@
 package net.froihofer.util.jboss.service;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import net.froihofer.ejb.bank.common.Bank;
+import net.froihofer.ejb.bank.common.BankException;
 import net.froihofer.ejb.bank.common.JaxRsAuthenticator;
 import net.froihofer.ejb.bank.common.PublicStockQuoteDTO;
+import net.froihofer.ejb.bank.common.persistence.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -26,6 +29,9 @@ public class BankImplRest {
 
     private static final Logger log = LoggerFactory.getLogger(BankImplRest.class);
 
+    //@EJB(lookup = "java:ds-finance-bank-ear-1.0-SNAPSHOT.ear/net.froihofer-ds-finance-bank-ejb-1.0-SNAPSHOT.jar/BankService")
+    @EJB(lookup = "ejb:ds-finance-bank-ear/ds-finance-bank-ejb//BankService!net.froihofer.ejb.bank.common.Bank")
+    private Bank bank;
     private Client client;
     private WebTarget baseTarget;
 
@@ -40,7 +46,7 @@ public class BankImplRest {
 
     public void setup() {
         client = ClientBuilder.newClient()
-                .register(new JaxRsAuthenticator("yourGitUser","yourGitPW"))
+                .register(new JaxRsAuthenticator("gitUsername","gitPw"))
                 .register(JacksonJsonProvider.class);
         baseTarget = client.target("https://edu.dedisys.org/ds-finance/ws/rs/trading/stock");
     }
@@ -112,6 +118,41 @@ public class BankImplRest {
                     .post(Entity.json(amount), BigDecimal.class);
 
             log.info("Rest output: " + response);
+            return Response.ok(response).build();
+        }catch (Exception e) {
+            System.out.println("Something happened");
+            e.printStackTrace();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request." + e.getMessage()).build();
+        }
+    }
+
+    @POST
+    @Path("selltwo")
+    public Response sell2(String name, @QueryParam("symbol") String symbol, @QueryParam("amount") int amount){
+        setup();
+        try {
+            String[] split = name.split(" ");
+            log.info("Rest input symbol: " + symbol + " amount: " + amount);
+            log.info("Selling from user: " + split[0] + " " + split[1]);
+
+            UserDTO userDTO = bank.findUserByName(split[0], split[1]);
+
+            if(userDTO == null){
+                throw new BankException("Logged in as unknown user!");
+            }
+
+            WebTarget postTarget = baseTarget.path("{symbol}").path("sell");
+            var response = postTarget.resolveTemplate("symbol", symbol)
+                    .request(MediaType.APPLICATION_JSON_TYPE)
+                    .post(Entity.json(amount), BigDecimal.class);
+
+            log.info("Rest output: " + response);
+
+            // Um die Infos über die Firma zu erhalten/PublicStockQuote wird Stockquotes aufgerufen
+            var publicStockQuote = bank.findStockBySymbol(symbol);
+
+            bank.createShareAndPersistToUser(userDTO, publicStockQuote.getCompanyName(), amount, response, symbol);
+
             return Response.ok(response).build();
         }catch (Exception e) {
             System.out.println("Something happened");
