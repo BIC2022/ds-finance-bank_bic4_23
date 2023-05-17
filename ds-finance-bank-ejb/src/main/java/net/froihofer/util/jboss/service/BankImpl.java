@@ -46,8 +46,8 @@ public class BankImpl implements Bank {
         TradingWebServiceService tradingWebServiceService = new TradingWebServiceService();
         tradingWebService = tradingWebServiceService.getTradingWebServicePort();
         BindingProvider bindingProvider = (BindingProvider) tradingWebService;
-        bindingProvider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "gitUsername");
-        bindingProvider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "gitPw");
+        bindingProvider.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "bic4a23_wohlrabe");
+        bindingProvider.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "ohKoo3k");
     }
     @Override
     public List<PublicStockQuoteDTO> findStockByName(String name) {
@@ -204,9 +204,14 @@ public class BankImpl implements Bank {
 
     @Override
     public PublicStockQuoteDTO findStockBySymbol(String symbol) throws BankException {
+        setup();
         try {
+            log.info("Trying to find stock by symbol: " + symbol);
             // Um die Infos über die Firma zu erhalten/PublicStockQuote wird Stockquotes aufgerufen
             var stockQuotes = tradingWebService.getStockQuotes(Arrays.asList(symbol));
+
+            log.info("Found stock quotes: " + stockQuotes.size());
+
             if(stockQuotes.size() < 1)
                 throw new BankException("No Share with symbol" + symbol + "found!");
 
@@ -228,5 +233,68 @@ public class BankImpl implements Bank {
 
         entityManager.merge(user);
         log.info("Creation of share successful. Share: " + share);
+    }
+
+    @Override
+    public BigDecimal calculateSumOfShares(UserDTO userDTO, String symbol) throws BankException {
+        log.info("try to calculate Sum of Stock by symbol: " + symbol + " with user: " + userDTO);
+
+        var shareDTOList= queryCountofShares(userDTO, symbol);
+
+        log.info("ShareList size " + shareDTOList.size() + " with symbol: " + symbol);
+
+        BigDecimal resultingPrice = new BigDecimal(0);
+        for(int i = 0; i < shareDTOList.size(); i++) {
+            resultingPrice = resultingPrice.add(shareDTOList.get(i).getBuyPrice().multiply(new BigDecimal(shareDTOList.get(i).getBoughtShares())));
+        }
+        log.info("Resulting price: " + resultingPrice);
+        return resultingPrice;
+    }
+
+    @Override
+    public List<ShareDTO> queryCountofShares(UserDTO userDTO, String symbol) throws BankException {
+        log.info("try to count Stock of symbol: " + symbol + " for user: " + userDTO);
+        userDTO = findUserByName(userDTO.getFirstName(), userDTO.getLastName());
+        if(userDTO == null){
+            throw new BankException("Logged in as unknown user!");
+        }
+
+            /*
+            List<BigDecimal> result = entityManager.createQuery(
+                            "SELECT SUM(s.boughtShares * s.buyPrice) FROM Share s "+
+                                    "WHERE s.user.id = :id", BigDecimal.class)
+                    .setParameter("id", userDTO.getId())
+                    .getResultList();
+            */
+
+        List<Share> result = null;
+        if(symbol != ""){
+            log.info("Searching for specific Symbol: " + symbol);
+            result = entityManager.createQuery(
+                            "SELECT s FROM Share s "+
+                                    "WHERE s.user.id = :id AND s.symbol = :sym", Share.class)
+                    .setParameter("id", userDTO.getId())
+                    .setParameter("sym", symbol)
+                    .getResultList();
+        } else {
+            log.info("Searching for all shares");
+
+            result = entityManager.createQuery(
+                            "SELECT s FROM Share s "+
+                                    "WHERE s.user.id = :id", Share.class)
+                    .setParameter("id", userDTO.getId())
+                    .getResultList();
+        }
+
+        log.info("Found shares: " + result.size());
+
+        if(result.size() > 0)
+        {
+            log.info("First share: " + result.get(0));
+            List<ShareDTO> shareDTOList = persistenceTranslator.toShareDTOList(result);
+            return shareDTOList;
+        }
+        log.error("Bank threw Exception: No share with symbol " + symbol + " found!");
+        throw new BankException("No share with symbol " + symbol + " found!");
     }
 }

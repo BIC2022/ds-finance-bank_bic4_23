@@ -21,4 +21,6 @@ public interface Bank {
     public List<ShareDTO> queryShares();
     public PublicStockQuoteDTO findStockBySymbol(String symbol) throws BankException;
     public void createShareAndPersistToUser(UserDTO userDTO, String  companyName, Integer boughtShares, BigDecimal buyPrice, String symbol);
+    public BigDecimal calculateSumOfShares(UserDTO userDTO, String symbol) throws BankException;
+    public List<ShareDTO> queryCountofShares(UserDTO userDTO, String symbol) throws BankException;
 }

@@ -30,7 +30,7 @@ public class BankImplRest {
     private static final Logger log = LoggerFactory.getLogger(BankImplRest.class);
 
     //@EJB(lookup = "java:ds-finance-bank-ear-1.0-SNAPSHOT.ear/net.froihofer-ds-finance-bank-ejb-1.0-SNAPSHOT.jar/BankService")
-    @EJB(lookup = "ejb:ds-finance-bank-ear/ds-finance-bank-ejb//BankService!net.froihofer.ejb.bank.common.Bank")
+    @EJB(lookup = "ejb:ds-finance-bank-ear/ds-finance-bank-ejb/BankService!net.froihofer.ejb.bank.common.Bank")
     private Bank bank;
     private Client client;
     private WebTarget baseTarget;
@@ -46,7 +46,7 @@ public class BankImplRest {
 
     public void setup() {
         client = ClientBuilder.newClient()
-                .register(new JaxRsAuthenticator("gitUsername","gitPw"))
+                .register(new JaxRsAuthenticator("bic4a23_wohlrabe","ohKoo3k"))
                 .register(JacksonJsonProvider.class);
         baseTarget = client.target("https://edu.dedisys.org/ds-finance/ws/rs/trading/stock");
     }
@@ -104,7 +104,7 @@ public class BankImplRest {
 
     //http://localhost:8080/ds-finance-bank-web/rs/bank/sell?symbol=AABA&amount=1
 
-
+    /*
     @GET
     @Path("/sell")
     public Response sell(@QueryParam("symbol") String symbol, @QueryParam("amount") int amount) {
@@ -125,10 +125,11 @@ public class BankImplRest {
             return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request." + e.getMessage()).build();
         }
     }
+    */
 
     @POST
-    @Path("selltwo")
-    public Response sell2(String name, @QueryParam("symbol") String symbol, @QueryParam("amount") int amount){
+    @Path("sell")
+    public Response sell(String name, @QueryParam("symbol") String symbol, @QueryParam("amount") int amount){
         setup();
         try {
             String[] split = name.split(" ");
@@ -139,6 +140,16 @@ public class BankImplRest {
 
             if(userDTO == null){
                 throw new BankException("Logged in as unknown user!");
+            }
+            log.info("User info from Bank: " + userDTO.getFirstName() + " " + userDTO.getLastName());
+
+            var shareDTOList = bank.queryCountofShares(userDTO, symbol);
+            int count = 0;
+            for(int i = 0; i < shareDTOList.size(); i++) {
+                count += shareDTOList.get(i).getBoughtShares();
+            }
+            if(count < amount) {
+                throw new BankException("Not enough shares to sell!");
             }
 
             WebTarget postTarget = baseTarget.path("{symbol}").path("sell");
@@ -151,7 +162,7 @@ public class BankImplRest {
             // Um die Infos über die Firma zu erhalten/PublicStockQuote wird Stockquotes aufgerufen
             var publicStockQuote = bank.findStockBySymbol(symbol);
 
-            bank.createShareAndPersistToUser(userDTO, publicStockQuote.getCompanyName(), amount, response, symbol);
+            bank.createShareAndPersistToUser(userDTO, publicStockQuote.getCompanyName(), -amount, response, symbol);
 
             return Response.ok(response).build();
         }catch (Exception e) {

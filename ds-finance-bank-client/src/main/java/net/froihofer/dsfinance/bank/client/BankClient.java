@@ -77,7 +77,9 @@ public class BankClient {
     Scanner scanner = new Scanner(System.in);
 
     while(true) {
-      System.out.println("Search|buy|sell|history|create|login|query");
+      System.out.println("Without login: search|history|create|login|query");
+      System.out.println("With login buy|sell|countshares|sum");
+
       var option = scanner.nextLine().toLowerCase();
 
       switch (option) {
@@ -104,6 +106,11 @@ public class BankClient {
         }
 
         case "sell": {
+          if(userDTO == null) {
+            System.out.println("Not logged in with a user!");
+            break;
+          }
+
           System.out.println("Enter symbol: ");
           var symbol = scanner.nextLine();
           System.out.println("Enter amount: ");
@@ -112,12 +119,26 @@ public class BankClient {
           break;
         }
 
-        case "selltwo": {
-          System.out.println("Enter symbol: ");
+        case "countshares": {
+          if(userDTO == null) {
+            System.out.println("Not logged in with a user!");
+            break;
+          }
+
+          System.out.println("Enter symbol to count (leave blank for all symbols): ");
           var symbol = scanner.nextLine();
-          System.out.println("Enter amount: ");
-          var amount = scanner.nextLine();
-          selltwo(symbol, amount);
+          count(symbol);
+          break;
+        }
+
+        case "sum": {
+          if(userDTO == null) {
+            System.out.println("Not logged in with a user!");
+            break;
+          }
+          System.out.println("Enter symbol to count (leave blank for all symbols): ");
+          var symbol = scanner.nextLine();
+          sum(symbol);
           break;
         }
 
@@ -200,6 +221,7 @@ public class BankClient {
       e.printStackTrace();
     }
   }
+  /*
   public void sell(String symbol, String amount) {
     try {
 
@@ -225,13 +247,13 @@ public class BankClient {
       e.printStackTrace();
     }
   }
-
-  public void selltwo(String symbol, String amount) {
+*/
+  public void sell(String symbol, String amount) {
     try {
 
       int shares = Integer.parseInt(amount);
 
-      WebTarget postTarget = baseTarget.path("selltwo")
+      WebTarget postTarget = baseTarget.path("sell")
               .queryParam("symbol", symbol)
               .queryParam("amount", shares);
 
@@ -239,14 +261,16 @@ public class BankClient {
               .post(Entity.json((userDTO.getFirstName() + " " + userDTO.getLastName())));
 
       if(response.getStatus() != Response.Status.OK.getStatusCode()) {
-        throw new WebApplicationException(response.getStatusInfo().getReasonPhrase());
+        throw new WebApplicationException(response.readEntity(String.class));
       }
 
       var res = response.readEntity(BigDecimal.class);
 
       System.out.println("Cost per share: " + res);
       System.out.println("Overall cost: " + res.multiply(BigDecimal.valueOf(shares)));
-    }  catch (Exception e) {
+    } catch (WebApplicationException e) {
+      log.error("Bank threw Exception: "+ e.getMessage());
+    } catch (Exception e) {
       log.error("Something did not work, see stack trace.", e);
       e.printStackTrace();
     }
@@ -355,6 +379,38 @@ public class BankClient {
     List<ShareDTO> shareDTOList = bank.queryShares();
     for(int i = 0; i < shareDTOList.size(); i++) {
       System.out.println(shareDTOList.get(i));
+    }
+  }
+
+  public void count(String symbol) {
+    try {
+      var shareDTOList = bank.queryCountofShares(userDTO, symbol);
+      int count = 0;
+      for(int i = 0; i < shareDTOList.size(); i++) {
+        count += shareDTOList.get(i).getBoughtShares();
+      }
+      System.out.println("Found shares: " + count + " for Symbol: " + symbol);
+
+      for(int i = 0; i < shareDTOList.size(); i++) {
+        System.out.println(shareDTOList.get(i));
+      }
+    } catch (BankException e) {
+      log.error("Bank threw Exception: "+ e.getMessage());
+    }  catch (Exception e) {
+      log.error("Something did not work, see stack trace.", e);
+      e.printStackTrace();
+    }
+  }
+
+  public void sum(String symbol) {
+    try {
+      var sumOfShares = bank.calculateSumOfShares(userDTO, symbol);
+      System.out.println("Sum of shares in userdepot: " + sumOfShares.toString() + " for Symbol: " + symbol);
+    } catch (BankException e) {
+      log.error("Bank threw Exception: "+ e.getMessage());
+    }  catch (Exception e) {
+      log.error("Something did not work, see stack trace.", e);
+      e.printStackTrace();
     }
   }
 }
