@@ -375,7 +375,7 @@ public class BankClient {
   public void queryAddresses() {
     List<AddressDTO> addressDTOList = bank.queryAddresses();
     if(addressDTOList == null) {
-      System.out.println("Keine User angelegt!");
+      System.out.println("Keine Addressen angelegt!");
       return;
     }
     for(int i = 0; i < addressDTOList.size(); i++) {
@@ -386,7 +386,7 @@ public class BankClient {
   public void queryShares() {
     List<ShareDTO> shareDTOList = bank.queryShares();
     if(shareDTOList == null) {
-      System.out.println("Keine User angelegt!");
+      System.out.println("Keine Shares angelegt!");
       return;
     }
     for(int i = 0; i < shareDTOList.size(); i++) {
