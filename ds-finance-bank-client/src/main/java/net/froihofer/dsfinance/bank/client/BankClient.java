@@ -364,12 +364,20 @@ public class BankClient {
 
   public void queryUsers() {
     List<UserDTO> userDTOList = bank.queryUsers();
+    if(userDTOList == null) {
+      System.out.println("Keine User angelegt!");
+      return;
+    }
     for(int i = 0; i < userDTOList.size(); i++) {
       System.out.println(userDTOList.get(i));
     }
   }
   public void queryAddresses() {
     List<AddressDTO> addressDTOList = bank.queryAddresses();
+    if(addressDTOList == null) {
+      System.out.println("Keine User angelegt!");
+      return;
+    }
     for(int i = 0; i < addressDTOList.size(); i++) {
       System.out.println(addressDTOList.get(i));
     }
@@ -377,6 +385,10 @@ public class BankClient {
 
   public void queryShares() {
     List<ShareDTO> shareDTOList = bank.queryShares();
+    if(shareDTOList == null) {
+      System.out.println("Keine User angelegt!");
+      return;
+    }
     for(int i = 0; i < shareDTOList.size(); i++) {
       System.out.println(shareDTOList.get(i));
     }
